@@ -10,7 +10,7 @@
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../SberBotan/telegrambots-3.5-jar-with-dependencies.jar!/" />
+          <root url="jar://$USER_HOME$/Downloads/telegrambots-3.5-jar-with-dependencies.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
