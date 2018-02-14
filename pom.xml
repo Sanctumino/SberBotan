@@ -22,7 +22,7 @@
 							<mainClass>Main</mainClass>
 						</manifest>
 					</archive>
-				<configuration>
+				</configuration>
 			</plugin>
 		</plugins>
 </project> 

@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="1a703014-b6cb-42a6-9d1f-de8cf9afe6ce" name="Default" comment="" />
+    <list default="true" id="1a703014-b6cb-42a6-9d1f-de8cf9afe6ce" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../SberBotan/.idea/workspace.xml" afterPath="$PROJECT_DIR$/../SberBotan/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../SberBotan/pom.xml" afterPath="$PROJECT_DIR$/../SberBotan/pom.xml" />
+    </list>
     <ignored path="$PROJECT_DIR$/../SberBotan/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -27,8 +30,8 @@
       <file leaf-file-name="Main.class" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/../SberBotan/src/Main.class">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+            <state relative-caret-position="68">
+              <caret line="4" column="0" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="4" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -352,8 +355,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/../SberBotan/src/Main.class">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        <state relative-caret-position="68">
+          <caret line="4" column="0" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="4" selection-end-column="0" />
           <folding />
         </state>
       </provider>
