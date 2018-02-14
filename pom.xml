@@ -1,5 +1,5 @@
 <project> 
-	<modelVersion>1.0.0</modelVersion> 
+	<modelVersion>4.0.0</modelVersion> 
 	<groupId>sber-botan</groupId> 
 	<artifactId>sber-botan</artifactId> 
 	<version>1.0-SNAPSHOT</version>
