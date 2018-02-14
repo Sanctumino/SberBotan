@@ -19,7 +19,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>ru.Main</mainClass>
+							<mainClass>main.java.Main</mainClass>
 						</manifest>
 					</archive>
 				</configuration>

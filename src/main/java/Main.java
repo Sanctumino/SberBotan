@@ -1,5 +1,3 @@
-package ru;
-
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 import org.telegram.telegrambots.ApiContextInitializer;
 import org.telegram.telegrambots.TelegramBotsApi;
@@ -51,9 +49,5 @@ public class Main extends TelegramLongPollingBot{
         } catch (TelegramApiException e){
             e.printStackTrace();
         }
-    }
-
-    enum Terms {
-        
     }
 }
