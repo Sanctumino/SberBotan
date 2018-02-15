@@ -1,4 +1,4 @@
-package main.java;
+package Bot;
 
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 import org.telegram.telegrambots.ApiContextInitializer;
