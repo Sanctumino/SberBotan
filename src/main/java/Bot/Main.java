@@ -7,8 +7,14 @@ import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Message;
 import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+import java.sql.*;
+import java.lang.String;
 
 public class Main extends TelegramLongPollingBot{
+    static final String DB_URL = "jdbc:postgresql://185.5.249.120/sber_botan";
+    static final String USER = "sb";
+    static final String PASS = "qwe123";
+
     public static void main(String[] args) {
         ApiContextInitializer.init(); // Инициализируем апи
         TelegramBotsApi botapi = new TelegramBotsApi();
@@ -31,6 +37,21 @@ public class Main extends TelegramLongPollingBot{
         if (txt.equals("/start")) {
             sendMsg(msg, "Hello, world! This is simple bot!");
         }
+        /*else {
+            try {
+                Connection connection = null;
+                connection = DriverManager.getConnection(DB_URL,USER,PASS);
+                Statement request = connection.createStatement();
+                ResultSet response = request.executeQuery("select definition from dictionary where abbreviation = '" + txt + "'");
+                sendMsg(msg,response.toString());
+                response.close();
+                request.close();
+            }
+            catch (SQLException ex) {
+                System.out.println("Connection failed");
+                return;
+            }
+        }*/
         if (txt.equals("ВСП")) {
             sendMsg(msg, "Внутреннее Структурное Подразделение");
         }
