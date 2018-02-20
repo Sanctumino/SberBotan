@@ -58,7 +58,7 @@ public class Main extends TelegramLongPollingBot{
                         count++;
                         }
                 if (count==0){
-                    sendMsg(msg, "Аббреваиатура не найдена.");
+                    sendMsg(msg, "Аббревиатура не найдена.");
                 }
                 response.close();
                 request.close();
