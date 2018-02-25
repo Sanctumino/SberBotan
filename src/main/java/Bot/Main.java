@@ -1,5 +1,7 @@
 package Bot;
 
+import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardMarkup;
+import org.telegram.telegrambots.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 import org.telegram.telegrambots.ApiContextInitializer;
 import org.telegram.telegrambots.TelegramBotsApi;
@@ -9,6 +11,8 @@ import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import java.sql.*;
 import java.lang.String;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Main extends TelegramLongPollingBot{
     static final String DB_URL = "jdbc:postgresql://185.5.249.120:5432/sber_botan";
@@ -24,13 +28,13 @@ public class Main extends TelegramLongPollingBot{
             e.printStackTrace();
         }
     }
-    @Override
+    //@Override
     public String getBotUsername() {
         return "SberBotan_bot";
         //возвращаем юзера
     }
 
-    @Override
+    //@Override
     public void onUpdateReceived(Update e) {
         Message msg = e.getMessage(); // Это нам понадобится
         String txt = msg.getText();
@@ -49,8 +53,10 @@ public class Main extends TelegramLongPollingBot{
             Connection connection = null;
             try {
                 connection = DriverManager.getConnection(DB_URL, USER, PASS);
-                Statement request = connection.createStatement();
-                ResultSet response = request.executeQuery("select definition from dictionary where abbreviation = '" + txt + "'");
+                PreparedStatement preparedStatement = null;
+                preparedStatement = connection.prepareStatement("select definition from dictionary where abbreviation = ?");
+                preparedStatement.setString(1,txt);
+                ResultSet response = preparedStatement.executeQuery();
                 int count = 0;
                 while (response.next()) {
                         String str = response.getString(1);
@@ -58,10 +64,14 @@ public class Main extends TelegramLongPollingBot{
                         count++;
                         }
                 if (count==0){
-                    sendMsg(msg, "Аббревиатура не найдена.");
+                    String saveTxt = txt;
+                    sendButtons(msg, "Аббревиатура не найдена.");
+                    if (txt.equals("Добавить")){
+                        sendMsg(msg,saveTxt);
+                    }
                 }
                 response.close();
-                request.close();
+                preparedStatement.close();
             }
              catch (SQLException ex) {
                 System.out.println("Connection Failed! Check output console");
@@ -90,6 +100,39 @@ public class Main extends TelegramLongPollingBot{
         s.setText(text);
         try { //Чтобы не крашнулась программа при вылете Exception
             sendMessage(s);
+        } catch (TelegramApiException e){
+            e.printStackTrace();
+        }
+    }
+    private void sendButtons(Message msg, String text) {
+        SendMessage sendReplyMessage = new SendMessage();
+        ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
+        sendReplyMessage.setReplyMarkup(replyKeyboardMarkup);
+        replyKeyboardMarkup.setSelective(true);
+        replyKeyboardMarkup.setResizeKeyboard(true);
+        replyKeyboardMarkup.setOneTimeKeyboard(true);
+
+        // Создаем список строк клавиатуры
+        List<KeyboardRow> keyboard = new ArrayList<KeyboardRow>();
+
+        // Первая строчка клавиатуры
+        KeyboardRow keyboardFirstRow = new KeyboardRow();
+
+        // Добавляем кнопки в первую строчку клавиатуры
+        keyboardFirstRow.add("Добавить");
+        keyboardFirstRow.add("Отмена");
+
+        // Добавляем все строчки клавиатуры в список
+        keyboard.add(keyboardFirstRow);
+
+        // Устанваливаем этот список нашей клавиатуре
+        replyKeyboardMarkup.setKeyboard(keyboard);
+        sendReplyMessage.setChatId(msg.getChatId().toString());
+        sendReplyMessage.setReplyToMessageId(msg.getMessageId());
+        sendReplyMessage.setText(text);
+
+        try { //Чтобы не крашнулась программа при вылете Exception
+            sendMessage(sendReplyMessage);
         } catch (TelegramApiException e){
             e.printStackTrace();
         }
