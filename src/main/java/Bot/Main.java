@@ -38,9 +38,44 @@ public class Main extends TelegramLongPollingBot{
     public void onUpdateReceived(Update e) {
         Message msg = e.getMessage(); // Это нам понадобится
         String txt = msg.getText();
+        String m = new String(msg.getText());// Как сделать так, чтобы переменная хранила значение введенного аттрибута, а не значение кнопки?
         if (txt.equals("/start")) {
             sendMsg(msg, "Привет! Введите аббревиатуру, без кавычек");
-        } else {
+        } else if (txt.equals("Добавить")){
+            try {
+                Class.forName("org.postgresql.Driver");
+            } catch (ClassNotFoundException ep) {
+                System.out.println("Where is your PostgreSQL JDBC Driver? "
+                        + "Include in your library path!");
+                ep.printStackTrace();
+                return;
+            }
+            System.out.println("PostgreSQL JDBC Driver Registered!");
+            Connection connection = null;
+            try {
+                connection = DriverManager.getConnection(DB_URL, USER, PASS);
+                PreparedStatement preparedStatement = null;
+                preparedStatement = connection.prepareStatement("insert into needdecrypt (abbreviation) values (?)");
+                preparedStatement.setString(1,m);
+                preparedStatement.executeQuery();
+                /*int count = 0;
+                while (response.next()) {
+                    String str = response.getString(1);
+                    sendMsg(msg, str);
+                    count++;
+                }
+                if (count==0){
+                    sendButtons(msg, "Аббревиатура не найдена.");
+                }
+                response.close();*/
+                preparedStatement.close();
+            }
+            catch (SQLException ex) {
+                System.out.println("Connection Failed! Check output console");
+                ex.printStackTrace();
+                return;
+            }
+        } else
             try {
                 Class.forName("org.postgresql.Driver");
             } catch (ClassNotFoundException ep) {
@@ -64,11 +99,7 @@ public class Main extends TelegramLongPollingBot{
                         count++;
                         }
                 if (count==0){
-                    String saveTxt = txt;
                     sendButtons(msg, "Аббревиатура не найдена.");
-                    if (txt.equals("Добавить")){
-                        sendMsg(msg,saveTxt);
-                    }
                 }
                 response.close();
                 preparedStatement.close();
@@ -87,7 +118,7 @@ public class Main extends TelegramLongPollingBot{
             sendMsg(msg, "Внутреннее Структурное Подразделение");
         }*/
         }
-    }
+
     @Override
     public String getBotToken() {
         return "476600922:AAHrTQiXjZVW5JMWgDHndO-evqMhVOpocO4";
