@@ -18,6 +18,7 @@ public class Main extends TelegramLongPollingBot{
     static final String DB_URL = "jdbc:postgresql://185.5.249.120:5432/sber_botan";
     static final String USER = "sb";
     static final String PASS = "qwe123";
+    String savedMsg = "";
 
     public static void main(String[] args) {
         ApiContextInitializer.init(); // Инициализируем апи
@@ -38,7 +39,7 @@ public class Main extends TelegramLongPollingBot{
     public void onUpdateReceived(Update e) {
         Message msg = e.getMessage(); // Это нам понадобится
         String txt = msg.getText();
-        String m = new String(msg.getText());// Как сделать так, чтобы переменная хранила значение введенного аттрибута, а не значение кнопки?
+        savedMsg = txt;// Как сделать так, чтобы переменная хранила значение введенного аттрибута, а не значение кнопки?
         if (txt.equals("/start")) {
             sendMsg(msg, "Привет! Введите аббревиатуру, без кавычек");
         } else if (txt.equals("Добавить")){
@@ -56,7 +57,7 @@ public class Main extends TelegramLongPollingBot{
                 connection = DriverManager.getConnection(DB_URL, USER, PASS);
                 PreparedStatement preparedStatement = null;
                 preparedStatement = connection.prepareStatement("insert into needdecrypt (abbreviation) values (?)");
-                preparedStatement.setString(1,m);
+                preparedStatement.setString(1,savedMsg);
                 preparedStatement.executeQuery();
                 /*int count = 0;
                 while (response.next()) {
@@ -100,6 +101,7 @@ public class Main extends TelegramLongPollingBot{
                         }
                 if (count==0){
                     sendButtons(msg, "Аббревиатура не найдена.");
+                    savedMsg = msg.getText();
                 }
                 response.close();
                 preparedStatement.close();
