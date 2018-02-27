@@ -13,6 +13,7 @@ import java.sql.*;
 import java.lang.String;
 import java.util.ArrayList;
 import java.util.List;
+import org.postgresql.util.PSQLException;
 
 public class Main extends TelegramLongPollingBot{
     static final String DB_URL = "jdbc:postgresql://185.5.249.120:5432/sber_botan";
@@ -39,10 +40,10 @@ public class Main extends TelegramLongPollingBot{
     public void onUpdateReceived(Update e) {
         Message msg = e.getMessage(); // Это нам понадобится
         String txt = msg.getText();
-        savedMsg = txt;// Как сделать так, чтобы переменная хранила значение введенного аттрибута, а не значение кнопки?
         if (txt.equals("/start")) {
             sendMsg(msg, "Привет! Введите аббревиатуру, без кавычек");
         } else if (txt.equals("Добавить")){
+            sendMsg(msg, "Запрос успешно отправлен");
             try {
                 Class.forName("org.postgresql.Driver");
             } catch (ClassNotFoundException ep) {
@@ -59,22 +60,18 @@ public class Main extends TelegramLongPollingBot{
                 preparedStatement = connection.prepareStatement("insert into needdecrypt (abbreviation) values (?)");
                 preparedStatement.setString(1,savedMsg);
                 preparedStatement.executeQuery();
-                /*int count = 0;
-                while (response.next()) {
-                    String str = response.getString(1);
-                    sendMsg(msg, str);
-                    count++;
-                }
-                if (count==0){
-                    sendButtons(msg, "Аббревиатура не найдена.");
-                }
-                response.close();*/
                 preparedStatement.close();
             }
             catch (SQLException ex) {
                 System.out.println("Connection Failed! Check output console");
                 ex.printStackTrace();
                 return;
+            }
+        } else if (txt.equals("Отмена")) {
+            try {
+                wait();
+            } catch (InterruptedException e1) {
+                e1.printStackTrace();
             }
         } else
             try {
@@ -100,8 +97,7 @@ public class Main extends TelegramLongPollingBot{
                         count++;
                         }
                 if (count==0){
-                    sendButtons(msg, "Аббревиатура не найдена.");
-                    savedMsg = msg.getText();
+                    sendButtons(msg, "Аббревиатура не найдена. Добавить запрос на расшифровку?");
                 }
                 response.close();
                 preparedStatement.close();
@@ -111,14 +107,12 @@ public class Main extends TelegramLongPollingBot{
                 ex.printStackTrace();
                 return;
             }
+
             if (connection != null) {
                 System.out.println("You made it, take control your database now!");
             } else {
                 System.out.println("Failed to make connection!");
             }
-       /* if (txt.equals("ВСП")) {
-            sendMsg(msg, "Внутреннее Структурное Подразделение");
-        }*/
         }
 
     @Override
@@ -163,7 +157,7 @@ public class Main extends TelegramLongPollingBot{
         sendReplyMessage.setChatId(msg.getChatId().toString());
         sendReplyMessage.setReplyToMessageId(msg.getMessageId());
         sendReplyMessage.setText(text);
-
+        savedMsg = msg.getText();
         try { //Чтобы не крашнулась программа при вылете Exception
             sendMessage(sendReplyMessage);
         } catch (TelegramApiException e){
