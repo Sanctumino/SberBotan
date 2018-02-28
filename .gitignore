@@ -81,4 +81,5 @@ hs_err_pid*
 /.idea/modules.xml
 /.idea/
 /sber-botan.iml
+target/
 
