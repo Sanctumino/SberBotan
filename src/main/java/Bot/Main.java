@@ -9,17 +9,11 @@ import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Message;
 import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
-import java.sql.*;
 import java.lang.String;
 import java.util.ArrayList;
 import java.util.List;
-import org.postgresql.util.PSQLException;
-import org.apache.commons.lang3.StringUtils;
 
 public class Main extends TelegramLongPollingBot{
-    static final String DB_URL = "jdbc:postgresql://185.5.249.120:5432/sber_botan";
-    static final String USER = "sb";
-    static final String PASS = "qwe123";
     String savedMsg = "";
     DAO Insert = new DAO();
     DAO Wait = new DAO();
