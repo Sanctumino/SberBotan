@@ -44,16 +44,15 @@ public class Main extends TelegramLongPollingBot{
             Insert.addAbbreviation(savedMsg);
             sendMsg(msg, "Запрос успешно отправлен");
         } else if (txt.equals("Отмена")) {
-            Wait.waitMessage();
+         //   Wait.waitMessage();
         } else {
             String findResult = FindDef.findDefinition(txt);
-            if (findResult.length()==0){
+            if (findResult.length() == 0) {
                 sendButtons(msg, "Аббревиатура не найдена. Добавить запрос на расшифровку?");
             } else {
-                sendMsg(msg,findResult);
-                System.out.println(findResult);
+                sendMsg(msg, findResult);
+                FindDef.returnAbbr="";
             }
-
         }
     }
 

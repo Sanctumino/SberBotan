@@ -7,8 +7,9 @@ public class DAO {
     static final String USER = "sb";
     static final String PASS = "qwe123";
     String returnAbbr = "";
+    Connection connection;
 
-    public void addAbbreviation(String savedMsg){
+    DAO (){
         try {
             Class.forName("org.postgresql.Driver");
         } catch (ClassNotFoundException ep) {
@@ -18,9 +19,16 @@ public class DAO {
             return;
         }
         System.out.println("PostgreSQL JDBC Driver Registered!");
-        Connection connection = null;
         try {
             connection = DriverManager.getConnection(DB_URL, USER, PASS);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void addAbbreviation(String savedMsg){
+        //connection = null;
+        try {
             PreparedStatement preparedStatement = null;
             preparedStatement = connection.prepareStatement("insert into needdecrypt (abbreviation) values (?)");
             preparedStatement.setString(1,savedMsg);
@@ -34,17 +42,7 @@ public class DAO {
         }
     }
     public String findDefinition (String abbreviation) {
-
-        try {
-            Class.forName("org.postgresql.Driver");
-        } catch (ClassNotFoundException ep) {
-            System.out.println("Where is your PostgreSQL JDBC Driver? "
-                    + "Include in your library path!");
-            ep.printStackTrace();
-            // return;
-        }
-        System.out.println("PostgreSQL JDBC Driver Registered!");
-        Connection connection = null;
+        //Connection connection = null;
         try {
             connection = DriverManager.getConnection(DB_URL, USER, PASS);
             PreparedStatement preparedStatement = null;
@@ -54,7 +52,6 @@ public class DAO {
             int count = 0;
             while (response.next()) {
                 String str = response.getString(1);
-                //sendMsg(msg, str);
                 count++;
                 returnAbbr = str;
             }
@@ -63,7 +60,6 @@ public class DAO {
         } catch (SQLException ex) {
             System.out.println("Connection Failed! Check output console");
             ex.printStackTrace();
-            //return;
         }
         return returnAbbr;
     }
