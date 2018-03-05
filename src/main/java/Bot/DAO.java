@@ -1,14 +1,12 @@
 package Bot;
 
 import java.sql.*;
-import java.util.ArrayList;
 
 public class DAO {
     static final String DB_URL = "jdbc:postgresql://185.5.249.120:5432/sber_botan";
     static final String USER = "sb";
     static final String PASS = "qwe123";
     String returnAbbr = "";
-    ArrayList<String> definitionList = new ArrayList<String>();
 
     public void addAbbreviation(String savedMsg){
         try {
@@ -36,12 +34,14 @@ public class DAO {
         }
     }
     public String findDefinition (String abbreviation) {
+
         try {
             Class.forName("org.postgresql.Driver");
         } catch (ClassNotFoundException ep) {
             System.out.println("Where is your PostgreSQL JDBC Driver? "
                     + "Include in your library path!");
             ep.printStackTrace();
+            // return;
         }
         System.out.println("PostgreSQL JDBC Driver Registered!");
         Connection connection = null;
@@ -51,17 +51,19 @@ public class DAO {
             preparedStatement = connection.prepareStatement("select definition from dictionary where abbreviation = ?");
             preparedStatement.setString(1, abbreviation);
             ResultSet response = preparedStatement.executeQuery();
+            int count = 0;
             while (response.next()) {
                 String str = response.getString(1);
-                definitionList.add(str);
-                replaceResultArray(definitionList);
+                //sendMsg(msg, str);
+                count++;
+                returnAbbr = str;
             }
-
             preparedStatement.close();
             response.close();
         } catch (SQLException ex) {
             System.out.println("Connection Failed! Check output console");
             ex.printStackTrace();
+            //return;
         }
         return returnAbbr;
     }
@@ -71,10 +73,5 @@ public class DAO {
         } catch (InterruptedException e1) {
             e1.printStackTrace();
         }
-    }
-    public void replaceResultArray(ArrayList definitionList){
-        returnAbbr = definitionList.toString().replace(",","");
-        returnAbbr = returnAbbr.replace("[","");
-        returnAbbr = returnAbbr.replace("]","");
     }
 }
