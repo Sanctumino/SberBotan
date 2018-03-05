@@ -9,17 +9,15 @@ import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Message;
 import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
-import java.sql.*;
 import java.lang.String;
 import java.util.ArrayList;
 import java.util.List;
-import org.postgresql.util.PSQLException;
 
 public class Main extends TelegramLongPollingBot{
-    static final String DB_URL = "jdbc:postgresql://185.5.249.120:5432/sber_botan";
-    static final String USER = "sb";
-    static final String PASS = "qwe123";
     String savedMsg = "";
+    DAO Insert = new DAO();
+    DAO Wait = new DAO();
+    DAO FindDef = new DAO();
 
     public static void main(String[] args) {
         ApiContextInitializer.init(); // Инициализируем апи
@@ -39,81 +37,24 @@ public class Main extends TelegramLongPollingBot{
     //@Override
     public void onUpdateReceived(Update e) {
         Message msg = e.getMessage(); // Это нам понадобится
-        String txt = msg.getText();
+        String txt = msg.getText().toUpperCase();
         if (txt.equals("/start")) {
             sendMsg(msg, "Привет! Введите аббревиатуру, без кавычек");
         } else if (txt.equals("Добавить")){
+            Insert.addAbbreviation(savedMsg);
             sendMsg(msg, "Запрос успешно отправлен");
-            try {
-                Class.forName("org.postgresql.Driver");
-            } catch (ClassNotFoundException ep) {
-                System.out.println("Where is your PostgreSQL JDBC Driver? "
-                        + "Include in your library path!");
-                ep.printStackTrace();
-                return;
-            }
-            System.out.println("PostgreSQL JDBC Driver Registered!");
-            Connection connection = null;
-            try {
-                connection = DriverManager.getConnection(DB_URL, USER, PASS);
-                PreparedStatement preparedStatement = null;
-                preparedStatement = connection.prepareStatement("insert into needdecrypt (abbreviation) values (?)");
-                preparedStatement.setString(1,savedMsg);
-                preparedStatement.executeQuery();
-                preparedStatement.close();
-            }
-            catch (SQLException ex) {
-                System.out.println("Connection Failed! Check output console");
-                ex.printStackTrace();
-                return;
-            }
         } else if (txt.equals("Отмена")) {
-            try {
-                wait();
-            } catch (InterruptedException e1) {
-                e1.printStackTrace();
-            }
-        } else
-            try {
-                Class.forName("org.postgresql.Driver");
-            } catch (ClassNotFoundException ep) {
-                System.out.println("Where is your PostgreSQL JDBC Driver? "
-                        + "Include in your library path!");
-                ep.printStackTrace();
-                return;
-            }
-            System.out.println("PostgreSQL JDBC Driver Registered!");
-            Connection connection = null;
-            try {
-                connection = DriverManager.getConnection(DB_URL, USER, PASS);
-                PreparedStatement preparedStatement = null;
-                preparedStatement = connection.prepareStatement("select definition from dictionary where abbreviation = ?");
-                preparedStatement.setString(1,txt);
-                ResultSet response = preparedStatement.executeQuery();
-                int count = 0;
-                while (response.next()) {
-                        String str = response.getString(1);
-                        sendMsg(msg, str);
-                        count++;
-                        }
-                if (count==0){
-                    sendButtons(msg, "Аббревиатура не найдена. Добавить запрос на расшифровку?");
-                }
-                response.close();
-                preparedStatement.close();
-            }
-             catch (SQLException ex) {
-                System.out.println("Connection Failed! Check output console");
-                ex.printStackTrace();
-                return;
-            }
-
-            if (connection != null) {
-                System.out.println("You made it, take control your database now!");
+            Wait.waitMessage();
+        } else {
+            String findResult = FindDef.findDefinition(txt);
+            if (findResult.length()==0){
+                sendButtons(msg, "Аббревиатура не найдена. Добавить запрос на расшифровку?");
             } else {
-                System.out.println("Failed to make connection!");
+                sendMsg(msg,findResult);
+                FindDef.definitionList.clear();
             }
         }
+    }
 
     @Override
     public String getBotToken() {
@@ -125,6 +66,7 @@ public class Main extends TelegramLongPollingBot{
         SendMessage s = new SendMessage();
         s.setChatId(msg.getChatId()); // Боту может писать не один человек, и поэтому чтобы отправить сообщение, грубо говоря нужно узнать куда его отправлять
         s.setText(text);
+       // Wait.waitMessage();
         try { //Чтобы не крашнулась программа при вылете Exception
             sendMessage(s);
         } catch (TelegramApiException e){
