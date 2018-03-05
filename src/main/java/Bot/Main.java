@@ -37,7 +37,7 @@ public class Main extends TelegramLongPollingBot{
     //@Override
     public void onUpdateReceived(Update e) {
         Message msg = e.getMessage(); // Это нам понадобится
-        String txt = msg.getText();
+        String txt = msg.getText().toUpperCase();
         if (txt.equals("/start")) {
             sendMsg(msg, "Привет! Введите аббревиатуру, без кавычек");
         } else if (txt.equals("Добавить")){
@@ -51,9 +51,8 @@ public class Main extends TelegramLongPollingBot{
                 sendButtons(msg, "Аббревиатура не найдена. Добавить запрос на расшифровку?");
             } else {
                 sendMsg(msg,findResult);
-                System.out.println(findResult);
+                FindDef.definitionList.clear();
             }
-
         }
     }
 
