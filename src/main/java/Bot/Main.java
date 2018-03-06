@@ -18,6 +18,7 @@ public class Main extends TelegramLongPollingBot{
     DAO Insert = new DAO();
     DAO Wait = new DAO();
     DAO FindDef = new DAO();
+    String resultArray = "";
 
     public static void main(String[] args) {
         ApiContextInitializer.init(); // Инициализируем апи
@@ -37,7 +38,7 @@ public class Main extends TelegramLongPollingBot{
     //@Override
     public void onUpdateReceived(Update e) {
         Message msg = e.getMessage(); // Это нам понадобится
-        String txt = msg.getText().toUpperCase();
+        String txt = msg.getText();
         if (txt.equals("/start")) {
             sendMsg(msg, "Привет! Введите аббревиатуру, без кавычек");
         } else if (txt.equals("Добавить")){
@@ -46,12 +47,14 @@ public class Main extends TelegramLongPollingBot{
         } else if (txt.equals("Отмена")) {
             Wait.waitMessage();
         } else {
-            String findResult = FindDef.findDefinition(txt);
-            if (findResult.length()==0){
-                sendButtons(msg, "Аббревиатура не найдена. Добавить запрос на расшифровку?");
-            } else {
-                sendMsg(msg,findResult);
+            txt = txt.toUpperCase();
+            resultArray = FindDef.findDefinition(txt);
+            if (resultArray.length()==0)
+            {sendButtons(msg, "Аббревиатура не найдена. Добавить запрос на расшифровку?");}
+            else {
+                sendMsg(msg,resultArray);
                 FindDef.definitionList.clear();
+                FindDef.returnAbbr = "";
             }
         }
     }

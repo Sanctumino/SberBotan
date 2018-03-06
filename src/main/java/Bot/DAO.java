@@ -56,7 +56,7 @@ public class DAO {
                 definitionList.add(str);
                 replaceResultArray(definitionList);
             }
-
+            definitionList.clear();
             preparedStatement.close();
             response.close();
         } catch (SQLException ex) {
@@ -73,8 +73,9 @@ public class DAO {
         }
     }
     public void replaceResultArray(ArrayList definitionList){
-        returnAbbr = definitionList.toString().replace(",","");
+        returnAbbr = definitionList.toString();
         returnAbbr = returnAbbr.replace("[","");
         returnAbbr = returnAbbr.replace("]","");
+        returnAbbr = returnAbbr.replace(",","");
     }
 }
