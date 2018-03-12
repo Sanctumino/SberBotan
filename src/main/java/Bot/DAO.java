@@ -35,6 +35,34 @@ public class DAO {
             return;
         }
     }
+
+    public void addDefinition(String savedMsg, String definition){
+        try {
+            Class.forName("org.postgresql.Driver");
+        } catch (ClassNotFoundException ep) {
+            System.out.println("Where is your PostgreSQL JDBC Driver? "
+                    + "Include in your library path!");
+            ep.printStackTrace();
+            return;
+        }
+        System.out.println("PostgreSQL JDBC Driver Registered!");
+        Connection connection = null;
+        try {
+            connection = DriverManager.getConnection(DB_URL, USER, PASS);
+            PreparedStatement preparedStatement = null;
+            preparedStatement = connection.prepareStatement("insert into needdecrypt (abbreviation,definition) values (?,?)");
+            preparedStatement.setString(1,savedMsg);
+            preparedStatement.setString(2,definition);
+            preparedStatement.executeQuery();
+            preparedStatement.close();
+        }
+        catch (SQLException ex) {
+            System.out.println("Connection Failed! Check output console");
+            ex.printStackTrace();
+            return;
+        }
+    }
+
     public String findDefinition (String abbreviation) {
         try {
             Class.forName("org.postgresql.Driver");

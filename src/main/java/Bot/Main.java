@@ -19,7 +19,9 @@ public class Main extends TelegramLongPollingBot{
     DAO Insert = new DAO();
     DAO Wait = new DAO();
     DAO FindDef = new DAO();
+    DAO AddDef = new DAO();
     String resultArray = "";
+    Boolean needDef = false;
 
     public static void main(String[] args) {
         ApiContextInitializer.init(); // Инициализируем апи
@@ -40,11 +42,19 @@ public class Main extends TelegramLongPollingBot{
     public void onUpdateReceived(Update e) {
         Message msg = e.getMessage(); // Это нам понадобится
         String txt = msg.getText();
-        if (txt.equals("/start")) {
+        if (needDef == true) {
+            AddDef.addDefinition(savedMsg,txt);
+            needDef = false;
+            savedMsg = "";
+            sendMsg(msg, "Перевод успешно отправлен");
+        } else if (txt.equals("/start")) {
             sendMsg(msg, "Привет! Введите аббревиатуру, без кавычек");
-        } else if (txt.equals("Добавить")){
+        } else if (txt.equals("Добавить")) {
             Insert.addAbbreviation(savedMsg);
             sendMsg(msg, "Запрос успешно отправлен");
+        } else if (txt.equals("Предложить перевод")) {
+            sendMsg(msg,"Введите свой вариант перевода");
+            needDef = true;
         } else if (txt.equals("Отмена")) {
             Wait.waitMessage();
         } else {
@@ -91,12 +101,17 @@ public class Main extends TelegramLongPollingBot{
         // Первая строчка клавиатуры
         KeyboardRow keyboardFirstRow = new KeyboardRow();
 
+        // Вторая строчка клавиатуры
+        KeyboardRow keyboardSecondRow = new KeyboardRow();
+
         // Добавляем кнопки в первую строчку клавиатуры
         keyboardFirstRow.add("Добавить");
         keyboardFirstRow.add("Отмена");
+        keyboardSecondRow.add("Предложить перевод");
 
         // Добавляем все строчки клавиатуры в список
         keyboard.add(keyboardFirstRow);
+        keyboard.add(keyboardSecondRow);
 
         // Устанваливаем этот список нашей клавиатуре
         replyKeyboardMarkup.setKeyboard(keyboard);
