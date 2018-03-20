@@ -22,6 +22,7 @@ public class Main extends TelegramLongPollingBot{
     DAO AddDef = new DAO();
     String resultArray = "";
     Boolean needDef = false;
+    Boolean checkCommand;
 
     public static void main(String[] args) {
         ApiContextInitializer.init(); // Инициализируем апи
@@ -42,6 +43,7 @@ public class Main extends TelegramLongPollingBot{
     public void onUpdateReceived(Update e) {
         Message msg = e.getMessage(); // Это нам понадобится
         String txt = msg.getText();
+        txt = checkFindCommand(txt);
         if (needDef == true) {
             AddDef.addDefinition(savedMsg,txt);
             needDef = false;
@@ -61,7 +63,9 @@ public class Main extends TelegramLongPollingBot{
             txt = txt.toUpperCase();
             resultArray = FindDef.findDefinition(txt);
             if (resultArray.length()==0)
-            {sendButtons(msg, "Аббревиатура не найдена. Добавить запрос на расшифровку?");}
+            {
+                sendButtons(msg, "Аббревиатура не найдена. Добавить запрос на расшифровку?");
+            }
             else {
                 sendMsg(msg,resultArray);
                 FindDef.definitionList.clear();
@@ -80,7 +84,6 @@ public class Main extends TelegramLongPollingBot{
         SendMessage s = new SendMessage();
         s.setChatId(msg.getChatId()); // Боту может писать не один человек, и поэтому чтобы отправить сообщение, грубо говоря нужно узнать куда его отправлять
         s.setText(text);
-       // Wait.waitMessage();
         try { //Чтобы не крашнулась программа при вылете Exception
             sendMessage(s);
         } catch (TelegramApiException e){
@@ -118,11 +121,23 @@ public class Main extends TelegramLongPollingBot{
         sendReplyMessage.setChatId(msg.getChatId().toString());
         sendReplyMessage.setReplyToMessageId(msg.getMessageId());
         sendReplyMessage.setText(text);
-        savedMsg = msg.getText();
+        savedMsg = checkFindCommand(msg.getText());
+        savedMsg = savedMsg.toUpperCase();
         try { //Чтобы не крашнулась программа при вылете Exception
             sendMessage(sendReplyMessage);
         } catch (TelegramApiException e){
             e.printStackTrace();
         }
+    }
+
+    public String checkFindCommand (String inputString){
+        String processedString = "";
+        checkCommand = inputString.contains("/find ");
+        if (checkCommand) {
+            processedString = inputString.substring(6,inputString.length());
+        } else {
+            processedString = inputString;
+        }
+        return processedString;
     }
 }
