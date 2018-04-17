@@ -1,7 +1,10 @@
 package Bot;
 
 import org.telegram.telegrambots.api.methods.AnswerInlineQuery;
+import org.telegram.telegrambots.api.objects.inlinequery.result.InlineQueryResult;
+import org.telegram.telegrambots.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardMarkup;
+import org.telegram.telegrambots.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 import org.telegram.telegrambots.ApiContextInitializer;
@@ -64,7 +67,7 @@ public class Main extends TelegramLongPollingBot{
             resultArray = FindDef.findDefinition(txt);
             if (resultArray.length()==0)
             {
-                sendButtons(msg, "Аббревиатура не найдена. Добавить запрос на расшифровку?");
+                sendButtons1(msg, "Аббревиатура не найдена. Добавить запрос на расшифровку?");
             }
             else {
                 sendMsg(msg,resultArray);
@@ -139,5 +142,30 @@ public class Main extends TelegramLongPollingBot{
             processedString = inputString;
         }
         return processedString;
+    }
+
+    private void sendButtons1(Message msg, String text) {
+        SendMessage sendReplyMessage = new SendMessage();
+        InlineKeyboardMarkup replyKeyboardMarkup = new InlineKeyboardMarkup();
+        sendReplyMessage.setReplyMarkup(replyKeyboardMarkup);
+
+        List<List<InlineKeyboardButton>> buttons = new ArrayList<List<InlineKeyboardButton>>();
+        List<InlineKeyboardButton> button1 = new ArrayList<InlineKeyboardButton>();
+        button1.add(new InlineKeyboardButton().setText("Кнопка").setCallbackData("123"));
+        buttons.add(button1);
+
+
+        // Устанваливаем этот список нашей клавиатуре
+        replyKeyboardMarkup.setKeyboard(buttons);
+        sendReplyMessage.setChatId(msg.getChatId().toString());
+        sendReplyMessage.setReplyToMessageId(msg.getMessageId());
+        sendReplyMessage.setText(text);
+        savedMsg = checkFindCommand(msg.getText());
+        savedMsg = savedMsg.toUpperCase();
+        try { //Чтобы не крашнулась программа при вылете Exception
+            sendMessage(sendReplyMessage);
+        } catch (TelegramApiException e){
+            e.printStackTrace();
+        }
     }
 }
